@@ -12,7 +12,7 @@ import {
 // Dummy data for preview
 const PREVIEW_DATA = {
   monthlyReport: {
-    userName: "John Doe",
+    userName: "Diyaa",
     type: "monthly-report",
     data: {
       month: "December",
@@ -35,7 +35,7 @@ const PREVIEW_DATA = {
     },
   },
   budgetAlert: {
-    userName: "John Doe",
+    userName: "Diyaa",
     type: "budget-alert",
     data: {
       percentageUsed: 85,
@@ -46,10 +46,14 @@ const PREVIEW_DATA = {
 };
 
 export default function EmailTemplate({
-  userName = "",
+  userName = "Diyaa",
   type = "monthly-report",
-  data = {},
+  data,
 }) {
+  // Use preview data if no data provided
+  const finalData = data || (type === "budget-alert" ? PREVIEW_DATA.budgetAlert.data : PREVIEW_DATA.monthlyReport.data);
+  const finalUserName = userName || "Diyaa";
+  
   if (type === "monthly-report") {
     return (
       <Html>
@@ -59,25 +63,25 @@ export default function EmailTemplate({
           <Container style={styles.container}>
             <Heading style={styles.title}>Monthly Financial Report</Heading>
 
-            <Text style={styles.text}>Hello {userName},</Text>
+            <Text style={styles.text}>Hello {finalUserName},</Text>
             <Text style={styles.text}>
-              Here&rsquo;s your financial summary for {data?.month}:
+              Here&rsquo;s your financial summary for {finalData?.month}:
             </Text>
 
             {/* Main Stats */}
             <Section style={styles.statsContainer}>
               <div style={styles.stat}>
                 <Text style={styles.text}>Total Income</Text>
-                <Text style={styles.heading}>${data?.stats.totalIncome}</Text>
+                <Text style={styles.heading}>${finalData?.stats?.totalIncome}</Text>
               </div>
               <div style={styles.stat}>
                 <Text style={styles.text}>Total Expenses</Text>
-                <Text style={styles.heading}>${data?.stats.totalExpenses}</Text>
+                <Text style={styles.heading}>${finalData?.stats?.totalExpenses}</Text>
               </div>
               <div style={styles.stat}>
                 <Text style={styles.text}>Net</Text>
                 <Text style={styles.heading}>
-                  ${data?.stats.totalIncome - data?.stats.totalExpenses}
+                  ${finalData?.stats?.totalIncome - finalData?.stats?.totalExpenses}
                 </Text>
               </div>
             </Section>
@@ -98,10 +102,10 @@ export default function EmailTemplate({
             )}
 
             {/* AI Insights */}
-            {data?.insights && (
+            {finalData?.insights && (
               <Section style={styles.section}>
                 <Heading style={styles.heading}>Welth Insights</Heading>
-                {data.insights.map((insight, index) => (
+                {finalData.insights.map((insight, index) => (
                   <Text key={index} style={styles.text}>
                     • {insight}
                   </Text>
@@ -127,24 +131,24 @@ export default function EmailTemplate({
         <Body style={styles.body}>
           <Container style={styles.container}>
             <Heading style={styles.title}>Budget Alert</Heading>
-            <Text style={styles.text}>Hello {userName},</Text>
+            <Text style={styles.text}>Hello {finalUserName},</Text>
             <Text style={styles.text}>
-              You&rsquo;ve used {data?.percentageUsed.toFixed(1)}% of your
+              You&rsquo;ve used {finalData?.percentageUsed?.toFixed(1)}% of your
               monthly budget.
             </Text>
             <Section style={styles.statsContainer}>
               <div style={styles.stat}>
                 <Text style={styles.text}>Budget Amount</Text>
-                <Text style={styles.heading}>${data?.budgetAmount}</Text>
+                <Text style={styles.heading}>${finalData?.budgetAmount}</Text>
               </div>
               <div style={styles.stat}>
                 <Text style={styles.text}>Spent So Far</Text>
-                <Text style={styles.heading}>${data?.totalExpenses}</Text>
+                <Text style={styles.heading}>${finalData?.totalExpenses}</Text>
               </div>
               <div style={styles.stat}>
                 <Text style={styles.text}>Remaining</Text>
                 <Text style={styles.heading}>
-                  ${data?.budgetAmount - data?.totalExpenses}
+                  ${finalData?.budgetAmount - finalData?.totalExpenses}
                 </Text>
               </div>
             </Section>
